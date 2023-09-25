@@ -3,6 +3,30 @@
 #include <unistd.h>
 #include <pthread.h>
 
+enum class status{
+	UNDONE,
+	DONE,
+};
+
+struct task{
+	int ram,
+			cpu,
+			status;
+};
+
+class Job{
+	struct task *tasks;
+	int size,
+			done;
+	Job(int size){
+		this->size=size;
+		tasks=(struct task*)calloc(size,sizeof(struct task));
+	}
+	~Job(){
+		free(tasks);
+	}
+};
+
 class Pod;
 struct Pkg {
   int worker_ram,
