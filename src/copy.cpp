@@ -6,6 +6,8 @@
 #include <cctype>
 #include <climits>
 
+#define DEBUG 0
+
 typedef unsigned int uint;
 
 enum Status{
@@ -35,21 +37,22 @@ public:
     for(int i = 0; i<size; i++){
       (tasks+i)->current_job=this;
       (tasks+i)->ram=random()%1000+500;
-      (tasks+i)->cpu=random()%3+1;
+      (tasks+i)->cpu=random()%4+1;
+#if DEBUG == 1     
+      printf("ram[%d] = %d\n",i,(tasks+i)->ram);
+      printf("cpu[%d] = %d\n",i,(tasks+i)->cpu);
+#endif
       (tasks+i)->status=INACTIVE;
       (tasks+i)->i=i;
     }
     mutex=PTHREAD_MUTEX_INITIALIZER;
-	}
-	~Job(){
-		free(tasks);
 	}
 
   Task *get_smallest_task_ram(){
     int ram_cmp = INT_MAX;
     Task *ret = NULL;
     for(int i = 0; i<size; i++){
-      if((tasks+i)->ram < ram_cmp){
+      if((tasks+i)->status == INACTIVE && (tasks+i)->ram < ram_cmp){
         ret = tasks+i;
         ram_cmp = (tasks+i)->ram;
       }
@@ -60,7 +63,7 @@ public:
     int cpu_cmp = INT_MAX;
     Task *ret = NULL;
     for(int i = 0; i<size; i++){
-      if((tasks+i)->cpu < cpu_cmp){
+      if((tasks+i)->status == INACTIVE && (tasks+i)->cpu < cpu_cmp){
         ret = tasks+i;
         cpu_cmp = (tasks+i)->ram;
       }
@@ -71,24 +74,23 @@ public:
     int ram_cmp =0;
     Task *ret = NULL;
     for(int i = 0; i<size; i++){
-      if((tasks+i)->ram > ram_cmp){
+      if((tasks+i)->status == INACTIVE && (tasks+i)->ram > ram_cmp){
         ret = tasks+i;
-        printf("ram cmp = %d\n",ram_cmp);
         ram_cmp = (tasks+i)->ram;
       }
     }
     return ret;
   }
   Task *get_biggest_task_cpu(){
-      int cpu_cmp = 0;
-      Task *ret = NULL;
-      for(int i = 0; i<size; i++){
-        if((tasks+i)->cpu > cpu_cmp){
-          ret = tasks+i;
-          cpu_cmp = (tasks+i)->ram;
-        }
+    int cpu_cmp = 0;
+    Task *ret = NULL;
+    for(int i = 0; i<size; i++){
+      if((tasks+i)->status == INACTIVE && (tasks+i)->cpu > cpu_cmp){
+        ret = tasks+i;
+        cpu_cmp = (tasks+i)->ram;
       }
-      return ret;
+    }
+    return ret;
   }
 
 };
@@ -160,7 +162,7 @@ void *work(void *ptr){
   return NULL;
 }
 
-void escalate_jobs(std::vector<Job> j_vec, std::vector<Pod> p_vec){
+void sched_jobs(std::vector<Job> j_vec, std::vector<Pod> p_vec){
   int highest_sum = 0;
   for(int i = 0; i<p_vec.size(); i++){
     for(int j = 0; j<j_vec.size(); j++){
@@ -181,12 +183,12 @@ int main(){
     Pod(3000,8)
   };
   
+#if DEBUG == 1
   std::cout << "smallest ram = " << j_vec[0].get_smallest_task_ram()->ram << std::endl;
   std::cout << "biggest ram = " << j_vec[0].get_biggest_task_ram()->ram << std::endl;
-  
   std::cout << "smallest cpu = " << j_vec[0].get_smallest_task_cpu()->cpu << std::endl;
   std::cout << "biggest cpu = " <<j_vec[0].get_biggest_task_cpu()->cpu << std::endl;
-
+#endif
   while(1){
     for(int i = 0; i<p_vec.size();i++){
       printf(
