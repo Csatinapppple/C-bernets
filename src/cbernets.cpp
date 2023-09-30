@@ -50,10 +50,21 @@ public:
       (tasks + i)->i = i;
     }
     mutex = PTHREAD_MUTEX_INITIALIZER;
+    done=0;
+  }
   
+  bool
+  are_tasks_done()
+  {
+    for(int ii = 0; ii<size; ii++)
+    {
+      if((tasks+ii)->status != DONE) return false;
+    }
+    return true;
   }
 
-  Task *get_smallest_task_ram ()
+  Task *
+  get_smallest_task_ram ()
   {
     int ram_cmp = INT_MAX;
     Task *ret = NULL;
@@ -67,7 +78,9 @@ public:
     }
     return ret;
   }
-  Task *get_smallest_task_cpu ()
+  
+  Task *
+  get_smallest_task_cpu ()
   {
     int cpu_cmp = INT_MAX;
     Task *ret = NULL;
@@ -81,7 +94,9 @@ public:
     }
     return ret;
   }
-  Task *get_biggest_task_ram ()
+  
+  Task *
+  get_biggest_task_ram ()
   {
     int ram_cmp = 0;
     Task *ret = NULL;
@@ -95,7 +110,9 @@ public:
     }
     return ret;
   }
-  Task *get_biggest_task_cpu ()
+  
+  Task *
+  get_biggest_task_cpu ()
   {
     int cpu_cmp = 0;
     Task *ret = NULL;
@@ -227,19 +244,6 @@ sched_pods (std::vector < Pod >& pod_vec, std::vector < Worker >& worker_vec)
   }
 }
 
-bool 
-are_pods_done(std::vector< Pod >& pod_vec)
-{
-  for(int ii = 0; ii < pod_vec.size(); ii++)
-  {
-    if(pod_vec[ii].size <= pod_vec[ii].done)
-      return false;
-  }
-  return true;
-}
-
-
-
 int
 main ()
 {
@@ -265,23 +269,26 @@ main ()
     cpu << std::endl;
 #endif
 
-  while (are_pods_done(p_vec) != false)
+  while (1)
+  {
+    for (int i = 0; i < w_vec.size (); i++)
     {
-      for (int i = 0; i < w_vec.size (); i++)
-      {
-          printf ("w_vec[%d] = .ram=%d, .cpu=%d\n",
-            i, w_vec[i].ram, w_vec[i].cpu);
-      }
+      printf ("w_vec[%d] = .ram=%d, .cpu=%d\n",
+        i, w_vec[i].ram, w_vec[i].cpu);
+    }
+ 
+    int count = 0;
+    for (int i = 0; i < p_vec.size (); i++)
+    {
+      printf ("p_vec[%d] = .size=%d, .done=%d\n",
+        i, p_vec[i].size, p_vec[i].done);
+      count += p_vec[i].are_tasks_done();
+    }
+    if(count == p_vec.size()) break;
 
-      for (int i = 0; i < p_vec.size (); i++)
-      {
-          printf ("p_vec[%d] = .size=%d, .done=%d\n",
-            i, p_vec[i].size, p_vec[i].done);
-      }
-
-      sched_pods(p_vec,w_vec);
-      sleep(1);
-    };
+    sched_pods(p_vec,w_vec);
+    sleep(1);
+  }
 
   return 0;
 }
