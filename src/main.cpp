@@ -1,3 +1,5 @@
+#define DEBUG
+//#undef DEBUG
 #include <iostream>
 #include <cstdio>
 #include <unistd.h>
@@ -7,9 +9,6 @@
 #include <climits>
 #include "pod.hpp"
 #include "worker.hpp"
-
-#define DEBUG
-//#undef DEBUG
 
 void
 sched_pods (std::vector < Pod >& pod_vec, std::vector < Worker >& worker_vec)
@@ -48,8 +47,8 @@ main ()
 {
   //srand(time(NULL));
   std::vector < Pod > p_vec = {
-    Pod (2),
-    Pod (3)
+    Pod (3),
+    Pod (2)
   };
 
   std::vector < Worker > w_vec = {

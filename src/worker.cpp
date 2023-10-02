@@ -11,7 +11,7 @@ Worker::add_worker (Task * t)
 {
   pthread_t pt;
 
-  if ((this->ram - t->ram) <= 0 || (this->cpu - t->cpu) <= 0)
+  if ((this->ram - t->ram) < 0 || (this->cpu - t->cpu) < 0)
   {
     printf ("ERROR ADDING WORKER: NOT ENOUGH RAM(%d) OR MEMORY(%d)\n",
       this->ram - ram, this->cpu - cpu);
@@ -53,9 +53,9 @@ work (void *ptr)
   
   pthread_mutex_lock (&p.t->this_pod->mutex);
   //access memory in Pod
-#ifdef DEBUG
-  printf("address of size inside thread = %p\n",&p.t->this_pod->size);
-#endif
+  
+  printf("address of pod size inside thread = %p\n",&p.t->this_pod->size);
+  
   p.t->this_pod->done++;
 
   printf ("Task[%d] done, tasks done until now = %d, total_tasks = %d\n",

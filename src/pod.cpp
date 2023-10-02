@@ -3,8 +3,12 @@
 Pod::Pod (int size)
 {
   this->size = size;
-  printf("pod size = %d\n",this->size);
 
+  printf("this pod size addr = %p\n",&this->size);
+  printf("this pod add = %p\n ",this);
+
+  printf("pod size = %d\n",this->size);
+  
   tasks = (Task *) calloc (size, sizeof (Task));
   
   for (int i = 0; i < size; i++)
