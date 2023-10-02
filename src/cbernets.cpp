@@ -89,7 +89,7 @@ public:
       if ((tasks + i)->status == INACTIVE && (tasks + i)->cpu < cpu_cmp)
       {
         ret = tasks + i;
-        cpu_cmp = (tasks + i)->ram;
+        cpu_cmp = (tasks + i)->cpu;
       }
     }
     return ret;
@@ -121,7 +121,7 @@ public:
       if ((tasks + i)->status == INACTIVE && (tasks + i)->cpu > cpu_cmp)
       {
         ret = tasks + i;
-        cpu_cmp = (tasks + i)->ram;
+        cpu_cmp = (tasks + i)->cpu;
       }
     }
     return ret;
