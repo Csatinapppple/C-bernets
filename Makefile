@@ -1,3 +1,4 @@
 src=src/*
+cflags=-l pthread
 main:
-	gcc $(src) -o c-bernets
+	g++ $(src) $(cflags) -o a.out
