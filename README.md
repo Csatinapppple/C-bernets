@@ -19,7 +19,7 @@ Para introduzir aleatoriedade no programa descomente o srand() no comeco da func
 pode se introduzir mais aleatoriedade quanto ao escalonamento de pods pondo um 
 random() % N_Teto + N_Chao em seu construtor
 
-#Compilando o programa
+# Compilando o programa
 Para compilar o programa e preciso de Make, se nao tiver make pode se instalar utilizando o comando
 ```
 sudo apt install make
